@@ -701,6 +701,40 @@
             localStorage.setItem('italianDrillStats', JSON.stringify(gameStats));
         }
 
+        // Get helpful hint for passato prossimo
+        function getPassatoProssimoHint(verb, correctAux) {
+            const verbName = verb.split('(')[0].trim().toLowerCase();
+            
+            // Movement verbs - use ESSERE
+            const movementVerbs = ['andare', 'venire', 'arrivare', 'partire', 'uscire', 'entrare', 'tornare', 'salire', 'scendere', 'cadere'];
+            if (movementVerbs.includes(verbName)) {
+                return 'MOVEMENT verbs use ESSERE. Think: "I went" = I AM gone → sono andato';
+            }
+            
+            // State change verbs - use ESSERE
+            const stateChangeVerbs = ['nascere', 'morire', 'diventare', 'crescere', 'rimanere', 'restare'];
+            if (stateChangeVerbs.includes(verbName)) {
+                return 'STATE CHANGE verbs use ESSERE. The subject changes state → sono nato';
+            }
+            
+            // Being verbs - use ESSERE
+            if (verbName === 'essere' || verbName === 'stare') {
+                return 'ESSERE and STARE use ESSERE in passato prossimo → sono stato/a';
+            }
+            
+            // Reflexive hint
+            if (verb.includes('si')) {
+                return 'REFLEXIVE verbs always use ESSERE → mi sono alzato/a';
+            }
+            
+            // Default hints
+            if (correctAux === 'essere') {
+                return 'This verb uses ESSERE. Memory trick: Does it involve movement or change? → ESSERE';
+            } else {
+                return 'This verb uses AVERE. Most transitive verbs (verbs with objects) use AVERE';
+            }
+        }
+
         // Normalize text for comparison
         function normalize(text) {
             return text
@@ -735,11 +769,23 @@
             // Check for exact or close match
             if (userNorm === correctNorm) {
                 isCorrect = true;
-                feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!</div>';
+                feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!';
+                // Add learning hint for passato prossimo
+                if (question.type === 'auxiliary' && question.q.includes('passato prossimo')) {
+                    const hint = getPassatoProssimoHint(question.q, correctAnswer.includes('sono') ? 'essere' : 'avere');
+                    feedbackHTML += '<div class="feedback-note">💡 ' + hint + '</div>';
+                }
+                feedbackHTML += '</div>';
             } else if (userNorm === correctNorm.replace(/\//g, '')) {
                 // Accept without optional gender marker (andato vs andato/a)
                 isCorrect = true;
-                feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!<div class="feedback-note">Optional: ' + correctAnswer + '</div></div>';
+                feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!<div class="feedback-note">Optional: ' + correctAnswer + '</div>';
+                // Add learning hint for passato prossimo
+                if (question.type === 'auxiliary' && question.q.includes('passato prossimo')) {
+                    const hint = getPassatoProssimoHint(question.q, correctAnswer.includes('sono') ? 'essere' : 'avere');
+                    feedbackHTML += '<div class="feedback-note">💡 ' + hint + '</div>';
+                }
+                feedbackHTML += '</div>';
             } else {
                 // Check if it's just accent/apostrophe issues
                 const userSimple = userAnswer.toLowerCase().replace(/[^\w\s]/g, '');
@@ -747,13 +793,20 @@
                 
                 if (userSimple === correctSimple) {
                     isCorrect = true;
-                    feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!<div class="feedback-note">Don\'t forget: ' + correctAnswer + '</div></div>';
+                    feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!<div class="feedback-note">Don\'t forget: ' + correctAnswer + '</div>';
+                    // Add learning hint for passato prossimo
+                    if (question.type === 'auxiliary' && question.q.includes('passato prossimo')) {
+                        const hint = getPassatoProssimoHint(question.q, correctAnswer.includes('sono') ? 'essere' : 'avere');
+                        feedbackHTML += '<div class="feedback-note">💡 ' + hint + '</div>';
+                    }
+                    feedbackHTML += '</div>';
                 } else {
                     // Wrong answer - check if it's a tense/form error
                     const questionText = question.q.toLowerCase();
                     const userLower = userAnswer.toLowerCase();
                     
                     let errorType = '';
+                    let learningHint = '';
                     
                     // Detect tense errors
                     if (questionText.includes('presente') && (userLower.includes('sono') || userLower.includes('ho')) && !correctAnswer.toLowerCase().includes('sono') && !correctAnswer.toLowerCase().includes('ho')) {
@@ -763,14 +816,19 @@
                     } else if ((userLower.includes('ho ') || userLower.includes('sono ')) && (correctAnswer.includes('ho ') || correctAnswer.includes('sono '))) {
                         if (userLower.includes('ho ') && correctAnswer.includes('sono ')) {
                             errorType = 'Wrong auxiliary! This verb uses ESSERE, not avere.';
+                            learningHint = getPassatoProssimoHint(question.q, 'essere');
                         } else if (userLower.includes('sono ') && correctAnswer.includes('ho ')) {
                             errorType = 'Wrong auxiliary! This verb uses AVERE, not essere.';
+                            learningHint = getPassatoProssimoHint(question.q, 'avere');
                         }
                     }
                     
                     feedbackHTML = '<div class="feedback feedback-incorrect">✗ Wrong!';
                     if (errorType) {
                         feedbackHTML += '<div class="feedback-note">' + errorType + '</div>';
+                    }
+                    if (learningHint) {
+                        feedbackHTML += '<div class="feedback-note">💡 ' + learningHint + '</div>';
                     }
                     feedbackHTML += '<div class="feedback-note">Correct: <strong>' + correctAnswer + '</strong></div></div>';
                 }
@@ -789,14 +847,12 @@
                 sessionCorrect++;
                 recordAnswer(true);
                 
-                // Auto-advance after correct answer
-                setTimeout(() => {
-                    nextQuestion();
-                }, 1500);
+                // Show next button for correct answers too
+                feedbackSection.innerHTML += '<button class="btn btn-success" style="margin-top: 10px;" onclick="nextQuestion()">Next Question →</button>';
             } else {
                 recordAnswer(false);
                 
-                // Show next button and hard phrase option
+                // Show hard phrase button and next button for wrong answers
                 feedbackSection.innerHTML += '<button class="btn btn-warning" style="margin-top: 10px;" onclick="markHardPhrase()">⭐ Mark as Hard Phrase</button>';
                 feedbackSection.innerHTML += '<button class="btn btn-success" style="margin-top: 10px;" onclick="nextQuestion()">Next Question →</button>';
             }
@@ -915,15 +971,6 @@
             }, 100);
         }
 
-        // Enter key to check answer
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('answerInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !this.disabled) {
-                    checkAnswer();
-                }
-            });
-        });
-
         // Screen management
         function showScreen(screenId) {
             document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
@@ -937,8 +984,8 @@
         // Confirm before going home mid-game
         function confirmGoHome() {
             if (currentIndex > 0 && currentIndex < currentQuestions.length) {
-                const confirm = window.confirm('You\'re in the middle of a round. Your progress for this session has been saved. Go back to home?');
-                if (confirm) {
+                const confirmResult = window.confirm('You\'re in the middle of a round. Your progress for this session has been saved. Go back to home?');
+                if (confirmResult) {
                     showHome();
                 }
             } else {
@@ -1112,15 +1159,25 @@
             }
         }
 
-        // Initialize
-        window.onload = function() {
+        // Enter key to check answer
+        window.addEventListener('DOMContentLoaded', function() {
+            const answerInput = document.getElementById('answerInput');
+            if (answerInput) {
+                answerInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !this.disabled) {
+                        checkAnswer();
+                    }
+                });
+            }
+            
+            // Check if first time
             if (gameStats.totalAnswered === 0) {
                 const hasData = confirm('👋 Welcome! Do you have progress data from Obsidian to import?');
                 if (hasData) {
                     showImportExport();
                 }
             }
-        };
+        });
     </script>
 </body>
 </html>
