@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italian Drill Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #764ba2;
+        }
+
+        .btn-secondary:hover {
+            background: #633d8a;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .question-card {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .answer-text {
+            font-size: 28px;
+            font-weight: 600;
+            color: #28a745;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f0f9f4;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .weak-areas {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .weak-areas h3 {
+            font-size: 16px;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .weak-areas ul {
+            list-style: none;
+            color: #856404;
+        }
+
+        .weak-areas li {
+            padding: 5px 0;
+            font-size: 14px;
+        }
+
+        .import-export {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .import-export h3 {
+            font-size: 16px;
+            color: #004085;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .celebration {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .celebration h2 {
+            color: #28a745;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .celebration p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 480px) {
+            .question-text {
+                font-size: 24px;
+            }
+            
+            .answer-text {
+                font-size: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Home Screen -->
+        <div id="homeScreen" class="card">
+            <h1>Italian Drill Game 🇮🇹</h1>
+            <p class="subtitle">Quick daily practice to build speaking fluency</p>
+            
+            <button class="btn" onclick="startDailyDrill()">Daily Drill (10 questions)</button>
+            <button class="btn btn-secondary" onclick="startReviewMode()">Review Missed Questions</button>
+            <button class="btn btn-secondary" onclick="showStats()">View Stats</button>
+            <button class="btn btn-secondary" onclick="showImportExport()">Import/Export Progress</button>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="questionScreen" class="card hidden">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 10</div>
+            
+            <div class="question-card">
+                <div class="question-type" id="questionType">VERB CONJUGATION</div>
+                <div class="question-text" id="questionText">andare (io)</div>
+                
+                <div id="answerSection" class="hidden">
+                    <div class="answer-text" id="answerText">vado</div>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="markCorrect()">✓ Got it</button>
+                        <button class="btn btn-danger" onclick="markIncorrect()">✗ Missed it</button>
+                    </div>
+                </div>
+                
+                <button id="revealBtn" class="btn" onclick="revealAnswer()">Reveal Answer</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="card hidden">
+            <div class="celebration">
+                <h2>Session Complete! 🎉</h2>
+                <p id="resultsText">You got 8/10 correct!</p>
+                
+                <button class="btn btn-success" onclick="exportProgress()">Export Progress</button>
+                <button class="btn" onclick="startDailyDrill()">Practice Again</button>
+                <button class="btn btn-secondary" onclick="showHome()">Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Stats Screen -->
+        <div id="statsScreen" class="card hidden">
+            <h1>Your Progress</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAnswered">0</div>
+                    <div class="stat-label">Total Answered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="accuracyRate">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+            
+            <div id="weakAreasSection" class="weak-areas hidden">
+                <h3>⚠️ Areas to Focus On</h3>
+                <ul id="weakAreasList"></ul>
+            </div>
+            
+            <button class="btn" onclick="showHome()">Back to Home</button>
+        </div>
+
+        <!-- Import/Export Screen -->
+        <div id="importExportScreen" class="card hidden">
+            <h1>Manage Progress</h1>
+            
+            <div class="import-export">
+                <h3>📤 Export Progress</h3>
+                <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                    Copy this data and paste it into your <code>italian-game-progress.md</code> file in Obsidian.
+                </p>
+                <textarea id="exportData" readonly></textarea>
+                <button class="btn btn-success" onclick="copyToClipboard()">Copy to Clipboard</button>
+            </div>
+            
+            <div class="import-export" style="background: #d4edda;">
+                <h3>📥 Import Progress</h3>
+                <p style="font-size: 14px; color: #155724; margin-bottom: 10px;">
+                    Paste your progress data from Obsidian here to restore your stats.
+                </p>
+                <textarea id="importData" placeholder="Paste your progress data here..."></textarea>
+                <button class="btn btn-success" onclick="importProgress()">Import Progress</button>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="showHome()">Back to Home</button>
+        </div>
+    </div>
+
+    <script>
+        // QUESTION BANK - Add new questions here using the same format
+        const QUESTIONS = [
+            // ESSERE VS STARE IDENTIFICATION
+            {q: "sono", a: "essere", type: "essere-stare", category: "Essere/Stare"},
+            {q: "sto", a: "stare", type: "essere-stare", category: "Essere/Stare"},
+            {q: "sei", a: "essere", type: "essere-stare", category: "Essere/Stare"},
+            {q: "stai", a: "stare", type: "essere-stare", category: "Essere/Stare"},
+            {q: "è", a: "essere", type: "essere-stare", category: "Essere/Stare"},
+            {q: "sta", a: "stare", type: "essere-stare", category: "Essere/Stare"},
+            {q: "siamo", a: "essere", type: "essere-stare", category: "Essere/Stare"},
+            {q: "stiamo", a: "stare", type: "essere-stare", category: "Essere/Stare"},
+            {q: "siete", a: "essere", type: "essere-stare", category: "Essere/Stare"},
+            {q: "state", a: "stare", type: "essere-stare", category: "Essere/Stare"},
+            {q: "sono (plural)", a: "essere", type: "essere-stare", category: "Essere/Stare"},
+            {q: "stanno", a: "stare", type: "essere-stare", category: "Essere/Stare"},
+            
+            // ESSERE CONJUGATION - PRESENTE
+            {q: "essere (io) - presente", a: "sono", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "essere (tu) - presente", a: "sei", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "essere (lui/lei) - presente", a: "è", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "essere (noi) - presente", a: "siamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "essere (voi) - presente", a: "siete", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "essere (loro) - presente", a: "sono", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // STARE CONJUGATION - PRESENTE
+            {q: "stare (io) - presente", a: "sto", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "stare (tu) - presente", a: "stai", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "stare (lui/lei) - presente", a: "sta", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "stare (noi) - presente", a: "stiamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "stare (voi) - presente", a: "state", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "stare (loro) - presente", a: "stanno", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // AVERE CONJUGATION - PRESENTE
+            {q: "avere (io) - presente", a: "ho", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "avere (tu) - presente", a: "hai", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "avere (lui/lei) - presente", a: "ha", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "avere (noi) - presente", a: "abbiamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "avere (voi) - presente", a: "avete", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "avere (loro) - presente", a: "hanno", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // ANDARE CONJUGATION - PRESENTE
+            {q: "andare (io) - presente", a: "vado", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "andare (tu) - presente", a: "vai", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "andare (lui/lei) - presente", a: "va", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "andare (noi) - presente", a: "andiamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "andare (voi) - presente", a: "andate", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "andare (loro) - presente", a: "vanno", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // FARE CONJUGATION - PRESENTE
+            {q: "fare (io) - presente", a: "faccio", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "fare (tu) - presente", a: "fai", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "fare (lui/lei) - presente", a: "fa", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "fare (noi) - presente", a: "facciamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "fare (voi) - presente", a: "fate", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "fare (loro) - presente", a: "fanno", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // DIRE CONJUGATION - PRESENTE
+            {q: "dire (io) - presente", a: "dico", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dire (tu) - presente", a: "dici", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dire (lui/lei) - presente", a: "dice", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dire (noi) - presente", a: "diciamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dire (voi) - presente", a: "dite", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dire (loro) - presente", a: "dicono", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // VENIRE CONJUGATION - PRESENTE
+            {q: "venire (io) - presente", a: "vengo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "venire (tu) - presente", a: "vieni", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "venire (lui/lei) - presente", a: "viene", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "venire (noi) - presente", a: "veniamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "venire (voi) - presente", a: "venite", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "venire (loro) - presente", a: "vengono", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // POTERE CONJUGATION - PRESENTE
+            {q: "potere (io) - presente", a: "posso", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "potere (tu) - presente", a: "puoi", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "potere (lui/lei) - presente", a: "può", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "potere (noi) - presente", a: "possiamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "potere (voi) - presente", a: "potete", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "potere (loro) - presente", a: "possono", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // VOLERE CONJUGATION - PRESENTE
+            {q: "volere (io) - presente", a: "voglio", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "volere (tu) - presente", a: "vuoi", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "volere (lui/lei) - presente", a: "vuole", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "volere (noi) - presente", a: "vogliamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "volere (voi) - presente", a: "volete", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "volere (loro) - presente", a: "vogliono", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // DOVERE CONJUGATION - PRESENTE
+            {q: "dovere (io) - presente", a: "devo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dovere (tu) - presente", a: "devi", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dovere (lui/lei) - presente", a: "deve", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dovere (noi) - presente", a: "dobbiamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dovere (voi) - presente", a: "dovete", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "dovere (loro) - presente", a: "devono", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // SAPERE CONJUGATION - PRESENTE
+            {q: "sapere (io) - presente", a: "so", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "sapere (tu) - presente", a: "sai", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "sapere (lui/lei) - presente", a: "sa", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "sapere (noi) - presente", a: "sappiamo", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "sapere (voi) - presente", a: "sapete", type: "verb", category: "Irregular Verbs - Present"},
+            {q: "sapere (loro) - presente", a: "sanno", type: "verb", category: "Irregular Verbs - Present"},
+            
+            // PASSATO PROSSIMO - WHICH AUXILIARY?
+            {q: "mangiare (io) - passato prossimo", a: "ho mangiato", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "andare (io) - passato prossimo", a: "sono andato/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "fare (io) - passato prossimo", a: "ho fatto", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "venire (io) - passato prossimo", a: "sono venuto/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "vedere (io) - passato prossimo", a: "ho visto", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "arrivare (io) - passato prossimo", a: "sono arrivato/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "dormire (io) - passato prossimo", a: "ho dormito", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "uscire (io) - passato prossimo", a: "sono uscito/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "leggere (io) - passato prossimo", a: "ho letto", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "partire (io) - passato prossimo", a: "sono partito/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "scrivere (io) - passato prossimo", a: "ho scritto", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "tornare (io) - passato prossimo", a: "sono tornato/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "dire (io) - passato prossimo", a: "ho detto", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "entrare (io) - passato prossimo", a: "sono entrato/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "prendere (io) - passato prossimo", a: "ho preso", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "rimanere (io) - passato prossimo", a: "sono rimasto/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "avere (io) - passato prossimo", a: "ho avuto", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "essere (io) - passato prossimo", a: "sono stato/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "nascere (io) - passato prossimo", a: "sono nato/a", type: "auxiliary", category: "Passato Prossimo"},
+            {q: "morire (lui/lei) - passato prossimo", a: "è morto/a", type: "auxiliary", category: "Passato Prossimo"},
+            
+            // HIGH-FREQUENCY PHRASES
+            {q: "Can you repeat that last part?", a: "Puoi ripetere l'ultima parte?", type: "phrase", category: "Common Phrases"},
+            {q: "Can you hear me okay?", a: "Mi senti bene?", type: "phrase", category: "Common Phrases"},
+            {q: "Could you type it in the chat?", a: "Puoi scriverlo in chat?", type: "phrase", category: "Common Phrases"},
+            {q: "Can you make it a little bigger?", a: "Puoi ingrandirlo un po'?", type: "phrase", category: "Common Phrases"},
+            {q: "I always forget that word.", a: "Mi dimentico sempre quella parola.", type: "phrase", category: "Common Phrases"},
+            {q: "How was your weekend?", a: "Com'è andato il weekend?", type: "phrase", category: "Common Phrases"},
+            {q: "I know the word, but I can't remember it.", a: "So la parola, ma non mi viene.", type: "phrase", category: "Common Phrases"},
+            {q: "Could you correct me if I say it wrong?", a: "Puoi correggermi se lo dico male?", type: "phrase", category: "Common Phrases"},
+            {q: "I have back-to-back meetings.", a: "Ho riunioni una dietro l'altra.", type: "phrase", category: "Common Phrases"},
+            {q: "I'm a bit tired.", a: "Sono un po' stanco/a.", type: "phrase", category: "Common Phrases"},
+            {q: "I'm learning Italian.", a: "Sto imparando l'italiano.", type: "phrase", category: "Common Phrases"},
+            {q: "I understand almost everything, but I struggle to speak.", a: "Capisco quasi tutto, ma faccio fatica a parlare.", type: "phrase", category: "Common Phrases"},
+            {q: "How do you say... in Italian?", a: "Come si dice... in italiano?", type: "phrase", category: "Common Phrases"},
+            {q: "I can't think of the word.", a: "Non mi viene la parola.", type: "phrase", category: "Common Phrases"},
+            {q: "So nice to see you again!", a: "Che bello rivederti!", type: "phrase", category: "Common Phrases"},
+            {q: "It's been a while, hasn't it?", a: "È passato un po' di tempo, vero?", type: "phrase", category: "Common Phrases"},
+            {q: "I'm trying to speak more.", a: "Sto cercando di parlare di più.", type: "phrase", category: "Common Phrases"},
+            {q: "I feel a bit confused when I try to speak.", a: "Mi sento un po' confuso/a quando provo a parlare.", type: "phrase", category: "Common Phrases"},
+            {q: "I'm getting used to it slowly.", a: "Mi sto abituando piano piano.", type: "phrase", category: "Common Phrases"},
+            {q: "That's a good question.", a: "È una buona domanda.", type: "phrase", category: "Common Phrases"},
+            
+            // LOOKUP WORDS FROM TODAY
+            {q: "ci fosse", a: "if there was (imperfect subjunctive)", type: "vocab", category: "Vocabulary"},
+            {q: "libretto", a: "registration (car document)", type: "vocab", category: "Vocabulary"},
+            {q: "neanche", a: "not even", type: "vocab", category: "Vocabulary"},
+            {q: "all'improvviso", a: "suddenly", type: "vocab", category: "Vocabulary"},
+            {q: "diventa", a: "becomes", type: "vocab", category: "Vocabulary"},
+            {q: "ci siamo messi", a: "we started", type: "vocab", category: "Vocabulary"},
+            {q: "c'è riuscito", a: "he succeeded", type: "vocab", category: "Vocabulary"},
+            {q: "un'oretta", a: "about an hour", type: "vocab", category: "Vocabulary"},
+            {q: "ormai", a: "by now / at this point", type: "vocab", category: "Vocabulary"},
+            {q: "di certo", a: "certainly", type: "vocab", category: "Vocabulary"},
+            {q: "mi sono accorto", a: "I noticed", type: "vocab", category: "Vocabulary"},
+            {q: "sa perdonare", a: "knows how to forgive", type: "vocab", category: "Vocabulary"},
+            {q: "dimenticando", a: "forgetting", type: "vocab", category: "Vocabulary"},
+            {q: "salissi", a: "I got in (imperfect subjunctive)", type: "vocab", category: "Vocabulary"},
+            {q: "chiedendo", a: "asking for", type: "vocab", category: "Vocabulary"},
+            {q: "guidando", a: "driving", type: "vocab", category: "Vocabulary"},
+        ];
+
+        // Game state
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let sessionCorrect = 0;
+        let sessionTotal = 0;
+        let gameStats = loadStats();
+
+        // Initialize stats structure
+        function loadStats() {
+            const saved = localStorage.getItem('italianDrillStats');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return {
+                totalAnswered: 0,
+                totalCorrect: 0,
+                byCategory: {},
+                missedQuestions: []
+            };
+        }
+
+        function saveStats() {
+            localStorage.setItem('italianDrillStats', JSON.stringify(gameStats));
+        }
+
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function showHome() {
+            showScreen('homeScreen');
+        }
+
+        // Start daily drill
+        function startDailyDrill() {
+            currentQuestions = selectSmartQuestions(10);
+            currentIndex = 0;
+            sessionCorrect = 0;
+            sessionTotal = 0;
+            showScreen('questionScreen');
+            showQuestion();
+        }
+
+        // Start review mode (missed questions only)
+        function startReviewMode() {
+            if (gameStats.missedQuestions.length === 0) {
+                alert('No missed questions yet! Complete a daily drill first.');
+                return;
+            }
+            currentQuestions = gameStats.missedQuestions.slice(0, 10);
+            currentIndex = 0;
+            sessionCorrect = 0;
+            sessionTotal = 0;
+            showScreen('questionScreen');
+            showQuestion();
+        }
+
+        // Smart question selection (weights toward weak areas)
+        function selectSmartQuestions(count) {
+            let pool = [...QUESTIONS];
+            
+            // Add extra copies of missed questions (2x weight)
+            gameStats.missedQuestions.forEach(q => {
+                pool.push(q);
+            });
+            
+            // Shuffle
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+            
+            return pool.slice(0, count);
+        }
+
+        // Display question
+        function showQuestion() {
+            if (currentIndex >= currentQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = currentQuestions[currentIndex];
+            
+            // Update progress
+            const progress = ((currentIndex + 1) / currentQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+            
+            // Update question display
+            const typeLabels = {
+                'essere-stare': 'IDENTIFY THE VERB',
+                'verb': 'VERB CONJUGATION',
+                'auxiliary': 'PASSATO PROSSIMO',
+                'phrase': 'TRANSLATE TO ITALIAN',
+                'vocab': 'VOCABULARY'
+            };
+            
+            document.getElementById('questionType').textContent = typeLabels[question.type] || 'QUESTION';
+            document.getElementById('questionText').textContent = question.q;
+            document.getElementById('answerText').textContent = question.a;
+            
+            // Reset state
+            document.getElementById('answerSection').classList.add('hidden');
+            document.getElementById('revealBtn').classList.remove('hidden');
+        }
+
+        function revealAnswer() {
+            document.getElementById('answerSection').classList.remove('hidden');
+            document.getElementById('revealBtn').classList.add('hidden');
+        }
+
+        function markCorrect() {
+            sessionCorrect++;
+            sessionTotal++;
+            recordAnswer(true);
+            nextQuestion();
+        }
+
+        function markIncorrect() {
+            sessionTotal++;
+            recordAnswer(false);
+            nextQuestion();
+        }
+
+        function recordAnswer(correct) {
+            const question = currentQuestions[currentIndex];
+            
+            gameStats.totalAnswered++;
+            if (correct) {
+                gameStats.totalCorrect++;
+            } else {
+                // Add to missed questions if not already there
+                const exists = gameStats.missedQuestions.some(q => 
+                    q.q === question.q && q.a === question.a
+                );
+                if (!exists) {
+                    gameStats.missedQuestions.push(question);
+                }
+            }
+            
+            // Track by category
+            if (!gameStats.byCategory[question.category]) {
+                gameStats.byCategory[question.category] = { correct: 0, total: 0 };
+            }
+            gameStats.byCategory[question.category].total++;
+            if (correct) {
+                gameStats.byCategory[question.category].correct++;
+            }
+            
+            saveStats();
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            showQuestion();
+        }
+
+        function showResults() {
+            const accuracy = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
+            document.getElementById('resultsText').textContent = 
+                `You got ${sessionCorrect}/${sessionTotal} correct! (${accuracy}%)`;
+            showScreen('resultsScreen');
+        }
+
+        // Stats screen
+        function showStats() {
+            const accuracy = gameStats.totalAnswered > 0 
+                ? Math.round((gameStats.totalCorrect / gameStats.totalAnswered) * 100) 
+                : 0;
+            
+            document.getElementById('totalAnswered').textContent = gameStats.totalAnswered;
+            document.getElementById('accuracyRate').textContent = accuracy + '%';
+            
+            // Show weak areas
+            const weakAreas = Object.entries(gameStats.byCategory)
+                .map(([category, stats]) => ({
+                    category,
+                    accuracy: stats.total > 0 ? (stats.correct / stats.total) * 100 : 100
+                }))
+                .filter(area => area.accuracy < 70)
+                .sort((a, b) => a.accuracy - b.accuracy);
+            
+            if (weakAreas.length > 0) {
+                document.getElementById('weakAreasSection').classList.remove('hidden');
+                const list = document.getElementById('weakAreasList');
+                list.innerHTML = weakAreas
+                    .map(area => `<li>${area.category}: ${Math.round(area.accuracy)}% accuracy</li>`)
+                    .join('');
+            } else {
+                document.getElementById('weakAreasSection').classList.add('hidden');
+            }
+            
+            showScreen('statsScreen');
+        }
+
+        // Import/Export
+        function showImportExport() {
+            document.getElementById('exportData').value = JSON.stringify(gameStats, null, 2);
+            showScreen('importExportScreen');
+        }
+
+        function exportProgress() {
+            const data = JSON.stringify(gameStats, null, 2);
+            document.getElementById('exportData').value = data;
+            showScreen('importExportScreen');
+            
+            // Auto-copy to clipboard
+            copyToClipboard();
+        }
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('exportData');
+            textarea.select();
+            document.execCommand('copy');
+            alert('✅ Progress copied! Now paste it into your italian-game-progress.md file in Obsidian.');
+        }
+
+        function importProgress() {
+            const data = document.getElementById('importData').value.trim();
+            if (!data) {
+                alert('Please paste your progress data first.');
+                return;
+            }
+            
+            try {
+                gameStats = JSON.parse(data);
+                saveStats();
+                alert('✅ Progress imported successfully!');
+                showHome();
+            } catch (e) {
+                alert('❌ Error: Invalid progress data. Make sure you copied it correctly from Obsidian.');
+            }
+        }
+
+        // Initialize - check if first time
+        window.onload = function() {
+            if (gameStats.totalAnswered === 0) {
+                const hasData = confirm('👋 Welcome! Do you have progress data from Obsidian to import?');
+                if (hasData) {
+                    showImportExport();
+                }
+            }
+        };
+    </script>
+</body>
+</html>
