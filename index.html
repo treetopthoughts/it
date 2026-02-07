@@ -56,6 +56,7 @@
             width: 100%;
             margin-bottom: 10px;
             transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:hover {
@@ -88,6 +89,33 @@
             background: #c82333;
         }
 
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .top-bar button {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
         .question-card {
             text-align: center;
             padding: 40px 20px;
@@ -106,24 +134,70 @@
         }
 
         .question-text {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             color: #333;
             margin-bottom: 30px;
-            min-height: 80px;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1.3;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: inherit;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #5568d3;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .answer-text {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
             color: #28a745;
             margin-bottom: 20px;
             padding: 20px;
             background: #f0f9f4;
             border-radius: 10px;
+            line-height: 1.4;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .feedback-correct {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback-incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .feedback-note {
+            font-size: 14px;
+            font-weight: normal;
+            margin-top: 8px;
+            font-style: italic;
         }
 
         .progress-bar {
@@ -210,6 +284,16 @@
             margin-bottom: 10px;
         }
 
+        .tip-box {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+
         textarea {
             width: 100%;
             min-height: 100px;
@@ -231,34 +315,54 @@
             gap: 10px;
         }
 
+        .button-group-triple {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
         .celebration {
             text-align: center;
-            padding: 40px;
+            padding: 40px 20px;
         }
 
         .celebration h2 {
             color: #28a745;
-            font-size: 36px;
-            margin-bottom: 20px;
+            font-size: 32px;
+            margin-bottom: 15px;
         }
 
         .celebration p {
             color: #666;
             font-size: 18px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 20px 0;
         }
 
         @media (max-width: 480px) {
             .question-text {
-                font-size: 24px;
+                font-size: 22px;
             }
             
             .answer-text {
                 font-size: 20px;
             }
             
+            .answer-input {
+                font-size: 18px;
+            }
+            
             h1 {
                 font-size: 24px;
+            }
+
+            .celebration h2 {
+                font-size: 28px;
             }
         }
     </style>
@@ -268,9 +372,10 @@
         <!-- Home Screen -->
         <div id="homeScreen" class="card">
             <h1>Italian Drill Game 🇮🇹</h1>
-            <p class="subtitle">Quick daily practice to build speaking fluency</p>
+            <p class="subtitle">Type your answers to build muscle memory</p>
             
             <button class="btn" onclick="startDailyDrill()">Daily Drill (10 questions)</button>
+            <button class="btn btn-secondary" onclick="startHardPhrasesMode()">Review Hard Phrases</button>
             <button class="btn btn-secondary" onclick="startReviewMode()">Review Missed Questions</button>
             <button class="btn btn-secondary" onclick="showStats()">View Stats</button>
             <button class="btn btn-secondary" onclick="showImportExport()">Import/Export Progress</button>
@@ -278,6 +383,11 @@
 
         <!-- Question Screen -->
         <div id="questionScreen" class="card hidden">
+            <div class="top-bar">
+                <button class="btn btn-secondary btn-small" onclick="confirmGoHome()">← Home</button>
+                <button class="btn btn-warning btn-small" onclick="saveAndExit()">💾 Save & Exit</button>
+            </div>
+
             <div class="progress-bar">
                 <div id="progressFill" class="progress-fill" style="width: 0%"></div>
             </div>
@@ -285,17 +395,31 @@
             
             <div class="question-card">
                 <div class="question-type" id="questionType">VERB CONJUGATION</div>
-                <div class="question-text" id="questionText">andare (io)</div>
+                <div class="question-text" id="questionText">andare (io) - presente</div>
                 
-                <div id="answerSection" class="hidden">
-                    <div class="answer-text" id="answerText">vado</div>
-                    <div class="button-group">
-                        <button class="btn btn-success" onclick="markCorrect()">✓ Got it</button>
-                        <button class="btn btn-danger" onclick="markIncorrect()">✗ Missed it</button>
-                    </div>
+                <!-- Typing Mode -->
+                <div id="typingSection">
+                    <input type="text" 
+                           id="answerInput" 
+                           class="answer-input" 
+                           placeholder="Type your answer..."
+                           autocomplete="off"
+                           autocorrect="off"
+                           autocapitalize="off"
+                           spellcheck="false">
+                    
+                    <div id="feedbackSection" class="hidden"></div>
+                    
+                    <button id="checkBtn" class="btn" onclick="checkAnswer()">Check Answer</button>
+                    <button id="flipBtn" class="btn btn-secondary" onclick="flipCard()">Can't Remember? Flip Card</button>
                 </div>
-                
-                <button id="revealBtn" class="btn" onclick="revealAnswer()">Reveal Answer</button>
+
+                <!-- Flipped Card View -->
+                <div id="flippedSection" class="hidden">
+                    <div class="answer-text" id="answerText">vado</div>
+                    <button class="btn btn-warning" onclick="markHardPhrase()">⭐ Mark as Hard Phrase</button>
+                    <button class="btn btn-success" onclick="nextQuestion()">Next Question →</button>
+                </div>
             </div>
         </div>
 
@@ -305,8 +429,19 @@
                 <h2>Session Complete! 🎉</h2>
                 <p id="resultsText">You got 8/10 correct!</p>
                 
-                <button class="btn btn-success" onclick="exportProgress()">Export Progress</button>
-                <button class="btn" onclick="startDailyDrill()">Practice Again</button>
+                <button class="btn" onclick="startDailyDrill()">Continue Practicing</button>
+                <button class="btn btn-warning" onclick="startHardPhrasesMode()" id="hardPhrasesBtn">Review Hard Phrases (<span id="hardPhrasesCount">0</span>)</button>
+                <button class="btn btn-secondary" onclick="startReviewMode()">Review All Missed Questions</button>
+
+                <hr>
+
+                <button class="btn btn-success" onclick="exportProgress()">📤 Export Progress</button>
+                <div class="tip-box">
+                    💡 Tip: You can play multiple rounds before exporting. Your progress accumulates as long as you keep this browser window open. Export once when you're done for the day.
+                </div>
+
+                <hr>
+
                 <button class="btn btn-secondary" onclick="showHome()">Back to Home</button>
             </div>
         </div>
@@ -323,6 +458,17 @@
                 <div class="stat-card">
                     <div class="stat-value" id="accuracyRate">0%</div>
                     <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="hardPhrasesTotal">0</div>
+                    <div class="stat-label">Hard Phrases</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="missedTotal">0</div>
+                    <div class="stat-label">Missed Questions</div>
                 </div>
             </div>
             
@@ -361,7 +507,7 @@
     </div>
 
     <script>
-        // QUESTION BANK - Add new questions here using the same format
+        // QUESTION BANK
         const QUESTIONS = [
             // ESSERE VS STARE IDENTIFICATION
             {q: "sono", a: "essere", type: "essere-stare", category: "Essere/Stare"},
@@ -509,7 +655,7 @@
             {q: "I'm getting used to it slowly.", a: "Mi sto abituando piano piano.", type: "phrase", category: "Common Phrases"},
             {q: "That's a good question.", a: "È una buona domanda.", type: "phrase", category: "Common Phrases"},
             
-            // LOOKUP WORDS FROM TODAY
+            // LOOKUP WORDS FROM HOMEWORK
             {q: "ci fosse", a: "if there was (imperfect subjunctive)", type: "vocab", category: "Vocabulary"},
             {q: "libretto", a: "registration (car document)", type: "vocab", category: "Vocabulary"},
             {q: "neanche", a: "not even", type: "vocab", category: "Vocabulary"},
@@ -534,8 +680,9 @@
         let sessionCorrect = 0;
         let sessionTotal = 0;
         let gameStats = loadStats();
+        let currentMode = 'daily'; // daily, hard-phrases, review
 
-        // Initialize stats structure
+        // Load stats from localStorage
         function loadStats() {
             const saved = localStorage.getItem('italianDrillStats');
             if (saved) {
@@ -545,7 +692,8 @@
                 totalAnswered: 0,
                 totalCorrect: 0,
                 byCategory: {},
-                missedQuestions: []
+                missedQuestions: [],
+                hardPhrases: []
             };
         }
 
@@ -553,59 +701,178 @@
             localStorage.setItem('italianDrillStats', JSON.stringify(gameStats));
         }
 
-        // Screen management
-        function showScreen(screenId) {
-            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
-            document.getElementById(screenId).classList.remove('hidden');
+        // Normalize text for comparison
+        function normalize(text) {
+            return text
+                .toLowerCase()
+                .replace(/[àáâãä]/g, 'a')
+                .replace(/[èéêë]/g, 'e')
+                .replace(/[ìíîï]/g, 'i')
+                .replace(/[òóôõö]/g, 'o')
+                .replace(/[ùúûü]/g, 'u')
+                .replace(/'/g, "'")
+                .replace(/[^\w\s/]/g, '')
+                .trim();
         }
 
-        function showHome() {
-            showScreen('homeScreen');
+        // Check if answer is correct
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            if (!userAnswer) return;
+
+            const question = currentQuestions[currentIndex];
+            const correctAnswer = question.a;
+            
+            const userNorm = normalize(userAnswer);
+            const correctNorm = normalize(correctAnswer);
+            
+            const feedbackSection = document.getElementById('feedbackSection');
+            feedbackSection.classList.remove('hidden');
+            
+            let isCorrect = false;
+            let feedbackHTML = '';
+
+            // Check for exact or close match
+            if (userNorm === correctNorm) {
+                isCorrect = true;
+                feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!</div>';
+            } else if (userNorm === correctNorm.replace(/\//g, '')) {
+                // Accept without optional gender marker (andato vs andato/a)
+                isCorrect = true;
+                feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!<div class="feedback-note">Optional: ' + correctAnswer + '</div></div>';
+            } else {
+                // Check if it's just accent/apostrophe issues
+                const userSimple = userAnswer.toLowerCase().replace(/[^\w\s]/g, '');
+                const correctSimple = correctAnswer.toLowerCase().replace(/[^\w\s]/g, '');
+                
+                if (userSimple === correctSimple) {
+                    isCorrect = true;
+                    feedbackHTML = '<div class="feedback feedback-correct">✓ Correct!<div class="feedback-note">Don\'t forget: ' + correctAnswer + '</div></div>';
+                } else {
+                    // Wrong answer - check if it's a tense/form error
+                    const questionText = question.q.toLowerCase();
+                    const userLower = userAnswer.toLowerCase();
+                    
+                    let errorType = '';
+                    
+                    // Detect tense errors
+                    if (questionText.includes('presente') && (userLower.includes('sono') || userLower.includes('ho')) && !correctAnswer.toLowerCase().includes('sono') && !correctAnswer.toLowerCase().includes('ho')) {
+                        errorType = 'Wrong tense! Question asks for PRESENTE, you gave passato prossimo.';
+                    } else if (questionText.includes('passato prossimo') && !userLower.includes('sono') && !userLower.includes('ho') && !userLower.includes('è')) {
+                        errorType = 'Wrong tense! Question asks for PASSATO PROSSIMO.';
+                    } else if ((userLower.includes('ho ') || userLower.includes('sono ')) && (correctAnswer.includes('ho ') || correctAnswer.includes('sono '))) {
+                        if (userLower.includes('ho ') && correctAnswer.includes('sono ')) {
+                            errorType = 'Wrong auxiliary! This verb uses ESSERE, not avere.';
+                        } else if (userLower.includes('sono ') && correctAnswer.includes('ho ')) {
+                            errorType = 'Wrong auxiliary! This verb uses AVERE, not essere.';
+                        }
+                    }
+                    
+                    feedbackHTML = '<div class="feedback feedback-incorrect">✗ Wrong!';
+                    if (errorType) {
+                        feedbackHTML += '<div class="feedback-note">' + errorType + '</div>';
+                    }
+                    feedbackHTML += '<div class="feedback-note">Correct: <strong>' + correctAnswer + '</strong></div></div>';
+                }
+            }
+
+            feedbackSection.innerHTML = feedbackHTML;
+            
+            // Update buttons
+            document.getElementById('checkBtn').classList.add('hidden');
+            document.getElementById('flipBtn').classList.add('hidden');
+            document.getElementById('answerInput').disabled = true;
+
+            // Record answer
+            sessionTotal++;
+            if (isCorrect) {
+                sessionCorrect++;
+                recordAnswer(true);
+                
+                // Auto-advance after correct answer
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1500);
+            } else {
+                recordAnswer(false);
+                
+                // Show next button and hard phrase option
+                feedbackSection.innerHTML += '<button class="btn btn-warning" style="margin-top: 10px;" onclick="markHardPhrase()">⭐ Mark as Hard Phrase</button>';
+                feedbackSection.innerHTML += '<button class="btn btn-success" style="margin-top: 10px;" onclick="nextQuestion()">Next Question →</button>';
+            }
         }
 
-        // Start daily drill
-        function startDailyDrill() {
-            currentQuestions = selectSmartQuestions(10);
-            currentIndex = 0;
-            sessionCorrect = 0;
-            sessionTotal = 0;
-            showScreen('questionScreen');
+        // Flip card to see answer
+        function flipCard() {
+            document.getElementById('typingSection').classList.add('hidden');
+            document.getElementById('flippedSection').classList.remove('hidden');
+            
+            const question = currentQuestions[currentIndex];
+            document.getElementById('answerText').textContent = question.a;
+            
+            // Don't count as answered yet - only when they click next
+            sessionTotal++;
+            recordAnswer(false);
+        }
+
+        // Mark phrase as hard
+        function markHardPhrase() {
+            const question = currentQuestions[currentIndex];
+            
+            const exists = gameStats.hardPhrases.some(q => 
+                q.q === question.q && q.a === question.a
+            );
+            
+            if (!exists) {
+                gameStats.hardPhrases.push(question);
+                saveStats();
+                alert('⭐ Marked as hard phrase! You\'ll see this more often.');
+            } else {
+                alert('This is already marked as a hard phrase.');
+            }
+        }
+
+        // Record answer in stats
+        function recordAnswer(correct) {
+            const question = currentQuestions[currentIndex];
+            
+            gameStats.totalAnswered++;
+            if (correct) {
+                gameStats.totalCorrect++;
+                
+                // Remove from hard phrases if answered correctly
+                gameStats.hardPhrases = gameStats.hardPhrases.filter(q => 
+                    !(q.q === question.q && q.a === question.a)
+                );
+            } else {
+                // Add to missed questions
+                const exists = gameStats.missedQuestions.some(q => 
+                    q.q === question.q && q.a === question.a
+                );
+                if (!exists) {
+                    gameStats.missedQuestions.push(question);
+                }
+            }
+            
+            // Track by category
+            if (!gameStats.byCategory[question.category]) {
+                gameStats.byCategory[question.category] = { correct: 0, total: 0 };
+            }
+            gameStats.byCategory[question.category].total++;
+            if (correct) {
+                gameStats.byCategory[question.category].correct++;
+            }
+            
+            saveStats();
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentIndex++;
             showQuestion();
         }
 
-        // Start review mode (missed questions only)
-        function startReviewMode() {
-            if (gameStats.missedQuestions.length === 0) {
-                alert('No missed questions yet! Complete a daily drill first.');
-                return;
-            }
-            currentQuestions = gameStats.missedQuestions.slice(0, 10);
-            currentIndex = 0;
-            sessionCorrect = 0;
-            sessionTotal = 0;
-            showScreen('questionScreen');
-            showQuestion();
-        }
-
-        // Smart question selection (weights toward weak areas)
-        function selectSmartQuestions(count) {
-            let pool = [...QUESTIONS];
-            
-            // Add extra copies of missed questions (2x weight)
-            gameStats.missedQuestions.forEach(q => {
-                pool.push(q);
-            });
-            
-            // Shuffle
-            for (let i = pool.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [pool[i], pool[j]] = [pool[j], pool[i]];
-            }
-            
-            return pool.slice(0, count);
-        }
-
-        // Display question
+        // Show question
         function showQuestion() {
             if (currentIndex >= currentQuestions.length) {
                 showResults();
@@ -631,68 +898,147 @@
             
             document.getElementById('questionType').textContent = typeLabels[question.type] || 'QUESTION';
             document.getElementById('questionText').textContent = question.q;
-            document.getElementById('answerText').textContent = question.a;
             
             // Reset state
-            document.getElementById('answerSection').classList.add('hidden');
-            document.getElementById('revealBtn').classList.remove('hidden');
-        }
-
-        function revealAnswer() {
-            document.getElementById('answerSection').classList.remove('hidden');
-            document.getElementById('revealBtn').classList.add('hidden');
-        }
-
-        function markCorrect() {
-            sessionCorrect++;
-            sessionTotal++;
-            recordAnswer(true);
-            nextQuestion();
-        }
-
-        function markIncorrect() {
-            sessionTotal++;
-            recordAnswer(false);
-            nextQuestion();
-        }
-
-        function recordAnswer(correct) {
-            const question = currentQuestions[currentIndex];
+            document.getElementById('typingSection').classList.remove('hidden');
+            document.getElementById('flippedSection').classList.add('hidden');
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').disabled = false;
+            document.getElementById('feedbackSection').innerHTML = '';
+            document.getElementById('feedbackSection').classList.add('hidden');
+            document.getElementById('checkBtn').classList.remove('hidden');
+            document.getElementById('flipBtn').classList.remove('hidden');
             
-            gameStats.totalAnswered++;
-            if (correct) {
-                gameStats.totalCorrect++;
-            } else {
-                // Add to missed questions if not already there
-                const exists = gameStats.missedQuestions.some(q => 
-                    q.q === question.q && q.a === question.a
-                );
-                if (!exists) {
-                    gameStats.missedQuestions.push(question);
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('answerInput').focus();
+            }, 100);
+        }
+
+        // Enter key to check answer
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('answerInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !this.disabled) {
+                    checkAnswer();
                 }
-            }
-            
-            // Track by category
-            if (!gameStats.byCategory[question.category]) {
-                gameStats.byCategory[question.category] = { correct: 0, total: 0 };
-            }
-            gameStats.byCategory[question.category].total++;
-            if (correct) {
-                gameStats.byCategory[question.category].correct++;
-            }
-            
-            saveStats();
+            });
+        });
+
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
         }
 
-        function nextQuestion() {
-            currentIndex++;
+        function showHome() {
+            showScreen('homeScreen');
+        }
+
+        // Confirm before going home mid-game
+        function confirmGoHome() {
+            if (currentIndex > 0 && currentIndex < currentQuestions.length) {
+                const confirm = window.confirm('You\'re in the middle of a round. Your progress for this session has been saved. Go back to home?');
+                if (confirm) {
+                    showHome();
+                }
+            } else {
+                showHome();
+            }
+        }
+
+        // Save and exit
+        function saveAndExit() {
+            if (currentIndex < currentQuestions.length) {
+                alert(`Progress saved! You answered ${sessionTotal} questions in this session.`);
+            }
+            showHome();
+        }
+
+        // Select smart questions
+        function selectSmartQuestions(count) {
+            let pool = [...QUESTIONS];
+            
+            if (currentMode === 'hard-phrases') {
+                if (gameStats.hardPhrases.length === 0) {
+                    alert('No hard phrases marked yet!');
+                    showHome();
+                    return [];
+                }
+                // 3x copies of hard phrases
+                pool = [];
+                gameStats.hardPhrases.forEach(q => {
+                    pool.push(q, q, q);
+                });
+            } else if (currentMode === 'review') {
+                if (gameStats.missedQuestions.length === 0) {
+                    alert('No missed questions yet! Complete a daily drill first.');
+                    showHome();
+                    return [];
+                }
+                pool = [...gameStats.missedQuestions];
+            } else {
+                // Daily mode - add 2x weight to missed and hard phrases
+                gameStats.missedQuestions.forEach(q => pool.push(q));
+                gameStats.hardPhrases.forEach(q => pool.push(q, q));
+            }
+            
+            // Shuffle
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+            
+            return pool.slice(0, count);
+        }
+
+        // Start modes
+        function startDailyDrill() {
+            currentMode = 'daily';
+            currentQuestions = selectSmartQuestions(10);
+            if (currentQuestions.length === 0) return;
+            currentIndex = 0;
+            sessionCorrect = 0;
+            sessionTotal = 0;
+            showScreen('questionScreen');
             showQuestion();
         }
 
+        function startHardPhrasesMode() {
+            currentMode = 'hard-phrases';
+            currentQuestions = selectSmartQuestions(10);
+            if (currentQuestions.length === 0) return;
+            currentIndex = 0;
+            sessionCorrect = 0;
+            sessionTotal = 0;
+            showScreen('questionScreen');
+            showQuestion();
+        }
+
+        function startReviewMode() {
+            currentMode = 'review';
+            currentQuestions = selectSmartQuestions(10);
+            if (currentQuestions.length === 0) return;
+            currentIndex = 0;
+            sessionCorrect = 0;
+            sessionTotal = 0;
+            showScreen('questionScreen');
+            showQuestion();
+        }
+
+        // Show results
         function showResults() {
             const accuracy = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
             document.getElementById('resultsText').textContent = 
                 `You got ${sessionCorrect}/${sessionTotal} correct! (${accuracy}%)`;
+            
+            document.getElementById('hardPhrasesCount').textContent = gameStats.hardPhrases.length;
+            
+            if (gameStats.hardPhrases.length === 0) {
+                document.getElementById('hardPhrasesBtn').classList.add('hidden');
+            } else {
+                document.getElementById('hardPhrasesBtn').classList.remove('hidden');
+            }
+            
             showScreen('resultsScreen');
         }
 
@@ -704,6 +1050,8 @@
             
             document.getElementById('totalAnswered').textContent = gameStats.totalAnswered;
             document.getElementById('accuracyRate').textContent = accuracy + '%';
+            document.getElementById('hardPhrasesTotal').textContent = gameStats.hardPhrases.length;
+            document.getElementById('missedTotal').textContent = gameStats.missedQuestions.length;
             
             // Show weak areas
             const weakAreas = Object.entries(gameStats.byCategory)
@@ -737,8 +1085,6 @@
             const data = JSON.stringify(gameStats, null, 2);
             document.getElementById('exportData').value = data;
             showScreen('importExportScreen');
-            
-            // Auto-copy to clipboard
             copyToClipboard();
         }
 
@@ -766,7 +1112,7 @@
             }
         }
 
-        // Initialize - check if first time
+        // Initialize
         window.onload = function() {
             if (gameStats.totalAnswered === 0) {
                 const hasData = confirm('👋 Welcome! Do you have progress data from Obsidian to import?');
